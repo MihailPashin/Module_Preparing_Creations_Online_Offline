@@ -1,15 +1,15 @@
-import itertools
+import itertools,timeit,re
 from sklearn.metrics.pairwise import cosine_similarity
 from nltk.stem.snowball import SnowballStemmer
 from operator import itemgetter
 from collections import Counter
-import timeit
 from RuBERT.load_bert import ruBERT
 
 class BERT_Process(ruBERT):
     def __init__(self, model_path="sergeyzh/rubert-mini-sts", content=True, functions=None, expressions=None):
         super().__init__(model_path, content, functions, expressions)
 
+        
     def preprocess_yake_phrases(self, keywords):
         merged = list(itertools.chain(*keywords))
         self.embeddings.index(merged)
@@ -49,26 +49,24 @@ class BERT_Process(ruBERT):
         rst_without_duplicates = list(set(itertools.chain(united_list)))
         return rst_without_duplicates
 
-    def creating_dict(self, rst_without_duplicates, df):
-        indexes_of_medicine = []
+    def creating_dict(self, rst_without_duplicates, full_dataset):
+        indexes_ = []
         reviews = []
         pattern1 = r'(\w+\W+){0,5}'
         groups_counts = []
-
         for shablon in rst_without_duplicates:
-            for i, row in enumerate(df['message'].items()):
+            for i, row in enumerate(full_dataset):
                 match2 = re.search(shablon, row.lower())
                 if match2:
-                    indexes_of_medicine.append(i)
+                    indexes_.append(i)
                     groups_counts.append(shablon)
-                    s_counts += 1
                     itog_ptrn = pattern1 + shablon + pattern1
                     regex = re.compile(itog_ptrn)
                     matches = [x.group() for x in re.finditer(regex, row.lower())]
                     matches = ','.join(matches)
                     reviews.append(matches)
 
-        dictionary = dict(zip(indexes_of_medicine, reviews))
+        dictionary = dict(zip(indexes_, reviews))
         Counter(groups_counts)
         return dictionary
 
@@ -85,3 +83,13 @@ class BERT_Process(ruBERT):
             #list_by_groups.append(result_for_one_group) старое присвоение
         return list_by_groups
 
+    def filter_reviews(self, dict_for_razmetka,full_dataset):
+        list_by_groups = []
+        for item in dict_for_razmetka.values():
+            rst_without_duplicates = []
+            embed_finding = self.searching_embed(item['candidates'], item['sm_score'])
+            result = self.stemmer_and_regex(embed_finding)
+            rst_without_duplicates.extend(list(set(itertools.chain(result))))
+            result_for_one_group = self.creating_dict(rst_without_duplicates, full_dataset)
+            list_by_groups.append(result_for_one_group)
+        return list_by_groups
