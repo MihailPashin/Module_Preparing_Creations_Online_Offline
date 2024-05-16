@@ -23,12 +23,13 @@ class SentimentModel_Process(SentimentModel):
 
     def predict_tonalnost(self, dictionary, name_groups):
         result = pd.DataFrame(columns=['Индекс', 'Оценка', 'Вес прогноза', 'Group'])
+        print('Sentiment Analysis начался.')
         for k, s in enumerate(dictionary):
             tonalty_class = []
             weights = []
             indexes_reviews = []
             group_value = name_groups[k]['name_group']
-
+            
             for idx, text in s.items():
                 predicted, max_probability = self.predict(text)
                 indexes_reviews.append(idx)
