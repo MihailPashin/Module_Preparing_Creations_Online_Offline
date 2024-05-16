@@ -10,9 +10,9 @@ class BERT_Process(ruBERT):
         super().__init__(model_path, content, functions, expressions)
 
         
-    def preprocess_yake_phrases(self, keywords):
-        merged = list(itertools.chain(*keywords))
-        self.embeddings.index(merged)
+    #def preprocess_yake_phrases(self, keywords):
+        #merged = list(itertools.chain(*keywords))
+        #self.embeddings.index(merged)
 
     def searching_embed(self, queries, sm_score):
         if sm_score > 0.99 or sm_score < 0.4:

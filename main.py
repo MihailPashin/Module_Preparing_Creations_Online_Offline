@@ -5,6 +5,7 @@ from Topics.EBC_control_themes import Group,GroupInterface,GroupControl
 from Loading_DataSet.Pandas_EBC_df import DataFrameEntity,DataFrameBoundary,DataFrameControl
 from XLM_RoBERTa.using_XLM_RoBERT import SentimentModel_Process
 from Yake_KeyWords_Extract.yake_classes import YakeExtractor, YakeBoundary, YakeControl
+from Nested_List_to_JSON.save_to_json import NestedListToJSON
 
 if __name__ == "__main__" :
 
@@ -23,11 +24,12 @@ if __name__ == "__main__" :
     reviews = df_boundary.get_reviews('message') ## Получил все отзывы
     
     yake_boundary = YakeBoundary()
-    yake_boundary.validate_reviews(reviews) ## Проверка отзывов на список 
-    keyword_extraction_controller = YakeControl()
-    keywords = keyword_extraction_controller.extract_keywords(reviews)
+    keywords = yake_boundary.get_keywords(reviews) ## Проверка отзывов на словарь + KeyPhraseExtraction 
     print(f' type of keywords = {type(keywords)}', len(keywords))
-    print(keywords[0:3])
+    
+    converter = NestedListToJSON(keywords) ## Сохранение в JSON формат для теста
+    converter.save_to_json('nested_list.json')
+    #print(keywords[0:3])
 
     #print(reviews)
     '''       

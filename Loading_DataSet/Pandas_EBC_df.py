@@ -37,10 +37,14 @@ class DataFrameBoundary:
 
     def get_reviews(self, column_name):
         if column_name in self.dataframe_entity.df.columns:
-            print(self.dataframe_entity.df[column_name][0:2])
-            return list(self.dataframe_entity.df[column_name].dropna())
+            reviews_series = self.dataframe_entity.df[column_name].dropna()
+            # Первые две строки из словаря
+            for index, review in list(reviews_series.items())[:2]:
+                print(f"Индекс: {index}, Отзыв: {review}")
+                
+            return reviews_series.to_dict()
         else:
-            raise Varierty_of_Errors(f"Column '{column_name}' not found in the DataFrame.")
+            raise Varierty_of_Errors(f"Столбец '{column_name}' не найден в DataFrame.")
 
 class DataFrameControl:
     def __init__(self, dataframe_entity):
