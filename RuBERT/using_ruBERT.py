@@ -69,6 +69,16 @@ class BERT_Process(ruBERT):
         dictionary = dict(zip(indexes_, reviews))
         Counter(groups_counts)
         return dictionary
+    def filter_reviews(self, dict_for_razmetka,full_dataset):
+        list_by_groups = []
+        for item in dict_for_razmetka.values():
+            rst_without_duplicates = []
+            embed_finding = self.searching_embed(item['candidates'], item['sm_score'])
+            result = self.stemmer_and_regex(embed_finding)
+            rst_without_duplicates.extend(list(set(itertools.chain(result))))
+            result_for_one_group = self.creating_dict(rst_without_duplicates, full_dataset)
+            list_by_groups.append(result_for_one_group)
+        return list_by_groups
 
     def summarization_indexes(self, dict_for_razmetka):
         list_by_groups = []
@@ -83,13 +93,4 @@ class BERT_Process(ruBERT):
             #list_by_groups.append(result_for_one_group) старое присвоение
         return list_by_groups
 
-    def filter_reviews(self, dict_for_razmetka,full_dataset):
-        list_by_groups = []
-        for item in dict_for_razmetka.values():
-            rst_without_duplicates = []
-            embed_finding = self.searching_embed(item['candidates'], item['sm_score'])
-            result = self.stemmer_and_regex(embed_finding)
-            rst_without_duplicates.extend(list(set(itertools.chain(result))))
-            result_for_one_group = self.creating_dict(rst_without_duplicates, full_dataset)
-            list_by_groups.append(result_for_one_group)
-        return list_by_groups
+   

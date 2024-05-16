@@ -1,13 +1,42 @@
 from RuBERT.load_bert import ruBERT
 from RuBERT.using_ruBERT import BERT_Process
 from Topics.topics_themes import dict_for_razmetka
-from Loading_DataSet.load import DataProcessor
-from Loading_DataSet.ready_dataframe import Ready_DataFrame
+from Topics.EBC_control_themes import Group,GroupInterface,GroupControl
+from Loading_DataSet.Pandas_EBC_df import DataFrameEntity,DataFrameBoundary,DataFrameControl
 from XLM_RoBERTa.using_XLM_RoBERT import SentimentModel_Process
+from Yake_KeyWords_Extract.yake_classes import YakeExtractor, YakeBoundary, YakeControl
 
 if __name__ == "__main__" :
 
-    print(f'ready df - {Ready_DataFrame.df}')
+
+    group_control = GroupControl(dict_for_razmetka)
+    group_interface = GroupInterface(group_control)
+    group_interface.check_scores()
+    group_interface.display_groups() ## Отобразил все тематики
+
+    filepath = 'Loading_DataSet/data/New_coordinates_titles.csv'
+    df_entity = DataFrameEntity(filepath)
+    df_control = DataFrameControl(df_entity)
+    df_control.process_data()
+
+    df_boundary = DataFrameBoundary(df_entity)
+    reviews = df_boundary.get_reviews('message') ## Получил все отзывы
+    
+    yake_boundary = YakeBoundary()
+    yake_boundary.validate_reviews(reviews) ## Проверка отзывов на список 
+    keyword_extraction_controller = YakeControl()
+    keywords = keyword_extraction_controller.extract_keywords(reviews)
+    print(f' type of keywords = {type(keywords)}', len(keywords))
+    print(keywords[0:3])
+
+    #print(reviews)
+    '''       
+    print(f'ready df - {dataframe_entity.df}')
+    
+    controller = KeywordExtractionController(reviews)
+    keywords = controller.extract_keywords()
+    print(f' type of keywords = {type(keywords)}')
+    print(keywords[0:3])
     
     keywords = Ready_DataFrame.extract_keywords()
     print(f' type of keywords = {type(keywords)}')
@@ -38,7 +67,7 @@ if __name__ == "__main__" :
     print('len(list_by_groups[1]) = ',len(list_by_groups[1]))
     sentiment_model = SentimentModel_Process()
     result = sentiment_model.predict_tonalnost(list_by_groups, dict_for_razmetka)
-
+    '''
     
     #print(f'len {len(result[0])}')
     #print(f'len {len(result[1])}')
