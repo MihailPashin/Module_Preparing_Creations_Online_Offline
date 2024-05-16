@@ -31,7 +31,7 @@ class YakeBoundary:
             if index not in keywords_dict or not keywords_dict[index]:
                 keywords_dict[index] = [str(review)]
         for index, review in list(keywords_dict.items())[:2]:
-                print(f"Ключ отзывы: {index}, Ключевые фразы: {review}")
+                print(f"Ключ отзыва: {index}, Ключевые фразы: {review}")
         return keywords_dict
 
 

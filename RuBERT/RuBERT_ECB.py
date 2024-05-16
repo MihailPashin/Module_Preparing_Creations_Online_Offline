@@ -3,16 +3,27 @@ from sklearn.metrics.pairwise import cosine_similarity
 from nltk.stem.snowball import SnowballStemmer
 from operator import itemgetter
 from collections import Counter
-from RuBERT.load_bert import ruBERT
+from sentence_transformers import SentenceTransformer
+from txtai.embeddings import Embeddings
+from txtai import graph
+
+
+class ruBERT:
+    def __init__(self, model_path="sergeyzh/rubert-mini-sts", content=True, functions=None, expressions=None):
+        self.model_path = model_path
+        self.content = content
+        self.functions = [{"name": "graph", "function": "graph.attribute"},]
+        self.expressions = [{"name": "category", "expression": "graph(indexid, 'category')"},
+{"name": "topic", "expression": "graph(indexid, 'topic')"},]
+        self.embeddings = Embeddings(path=self.model_path, content=self.content, functions=self.functions, expressions=self.expressions)
+
+    def convert_to_embed(self, keywords):
+        merged = list(itertools.chain(*keywords.values()))
+        self.embeddings.index(merged)
 
 class BERT_Process(ruBERT):
     def __init__(self, model_path="sergeyzh/rubert-mini-sts", content=True, functions=None, expressions=None):
         super().__init__(model_path, content, functions, expressions)
-
-        
-    def preprocess_yake_phrases(self, keywords):
-        merged = list(itertools.chain(*keywords))
-        self.embeddings.index(merged)
 
     def searching_embed(self, queries, sm_score):
         if sm_score > 0.99 or sm_score < 0.4:
@@ -55,10 +66,10 @@ class BERT_Process(ruBERT):
         pattern1 = r'(\w+\W+){0,5}'
         groups_counts = []
         for shablon in rst_without_duplicates:
-            for i, row in enumerate(full_dataset):
+            for index, row in full_dataset.items():
                 match2 = re.search(shablon, row.lower())
                 if match2:
-                    indexes_.append(i)
+                    indexes_.append(index)
                     groups_counts.append(shablon)
                     itog_ptrn = pattern1 + shablon + pattern1
                     regex = re.compile(itog_ptrn)
@@ -76,6 +87,7 @@ class BERT_Process(ruBERT):
             embed_finding = self.searching_embed(item['candidates'], item['sm_score'])
             result = self.stemmer_and_regex(embed_finding)
             rst_without_duplicates.extend(list(set(itertools.chain(result))))
+            print('type of full_dataset',type(full_dataset))
             result_for_one_group = self.creating_dict(rst_without_duplicates, full_dataset)
             list_by_groups.append(result_for_one_group)
         return list_by_groups
@@ -93,4 +105,3 @@ class BERT_Process(ruBERT):
             #list_by_groups.append(result_for_one_group) старое присвоение
         return list_by_groups
 
-   

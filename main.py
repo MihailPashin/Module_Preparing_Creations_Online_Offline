@@ -1,10 +1,9 @@
-from RuBERT.load_bert import ruBERT
-from RuBERT.using_ruBERT import BERT_Process
 from Topics.topics_themes import dict_for_razmetka
 from Topics.EBC_control_themes import Group,GroupInterface,GroupControl
 from Loading_DataSet.Pandas_EBC_df import DataFrameEntity,DataFrameBoundary,DataFrameControl
-from XLM_RoBERTa.using_XLM_RoBERT import SentimentModel_Process
-from Yake_KeyWords_Extract.yake_classes import YakeExtractor, YakeBoundary, YakeControl
+from Yake_KeyWords_Extract.yake_keywords import YakeExtractor, YakeBoundary, YakeControl
+from RuBERT.RuBERT_ECB import ruBERT, BERT_Process
+from XLM_RoBERTa.Sentiment_Analysis_ECB import SentimentModel,SentimentModel_Process
 from Nested_List_to_JSON.save_to_json import NestedListToJSON
 
 if __name__ == "__main__" :
@@ -27,8 +26,30 @@ if __name__ == "__main__" :
     keywords = yake_boundary.get_keywords(reviews) ## Проверка отзывов на словарь + KeyPhraseExtraction 
     print(f' type of keywords = {type(keywords)}', len(keywords))
     
-    converter = NestedListToJSON(keywords) ## Сохранение в JSON формат для теста
-    converter.save_to_json('nested_list.json')
+    #converter = NestedListToJSON(keywords) ## Сохранение в JSON формат для теста
+    #converter.save_to_json('nested_list.json')
+    
+    bert_processor = BERT_Process()
+    bert_processor.convert_to_embed(keywords)
+    print(f'Эмбединги извлечены. Активируем скрипт')
+    list_by_groups = bert_processor.filter_reviews(dict_for_razmetka, reviews)
+    print(f'len {len(list_by_groups)}')
+    print(list_by_groups)
+    print('len(list_by_groups[2]) = ',len(list_by_groups[2]))
+    print('len(list_by_groups[1]) = ',len(list_by_groups[1]))
+    #print(f'result from bolnichka {list_by_groups[0][0]}')
+    sentiment_model = SentimentModel_Process()
+    result = sentiment_model.predict_tonalnost(list_by_groups, dict_for_razmetka)
+    print('Sentiment Analysis окончен. Число строк в таблице',len(result))    
+
+    
+    
+    #print(f'len {len(result[0])}')
+    #print(f'len {len(result[1])}')
+    #print(f'len {len(result[2])}')
+
+
+
     #print(keywords[0:3])
 
     #print(reviews)
