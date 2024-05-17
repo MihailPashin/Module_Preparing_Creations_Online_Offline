@@ -1,4 +1,3 @@
-from Exception.user_exception import Varierty_of_Errors
 import yake
 
 # yake_classes
@@ -11,7 +10,7 @@ class YakeExtractor:
             keywords = self.yake_extractor.extract_keywords(text)
             return [keyword[0] for keyword in keywords]
         except Exception as e:
-            raise Exception(f"Error extracting keywords: {e}")
+            raise Exception(f"Сбой в алгоритме извлечения ключевых фраз: {e}")
 
 class YakeBoundary:
     def __init__(self):
@@ -44,7 +43,6 @@ class YakeControl:
         keywords_dict = {}
         print('len reviews dict', len(reviews_dict))
         for index, review in reviews_dict.items():
-            print(f"Ключ отзывы: {index}, Ключевые фразы: {review}")
             keywords = self.yake_extractor.extract_single_row(review)
             keywords_dict[index] = keywords
         

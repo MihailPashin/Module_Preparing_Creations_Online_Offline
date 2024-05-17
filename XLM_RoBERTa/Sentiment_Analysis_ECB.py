@@ -1,8 +1,8 @@
 import torch,pandas as pd
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
-class SentimentModel:
-    def __init__(self, model_name="sismetanin/xlm_roberta_base-ru-sentiment-rureviews"):
+class SentimentModel_Entity:
+    def __init__(self, model_name):
         self.model_name = model_name
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         self.model = AutoModelForSequenceClassification.from_pretrained(self.model_name, return_dict=True)
@@ -16,9 +16,22 @@ class SentimentModel:
             max_probability = torch.max(probabilities).item()
         return predicted, max_probability
 
-class SentimentModel_Process(SentimentModel):
+class SentimentModel_Boundary:
     def __init__(self, model_name="sismetanin/xlm_roberta_base-ru-sentiment-rureviews"):
-        super().__init__(model_name)
+        self.model_name = self.validate_model_path(model_name)
+        self.control = SentimentModel_Control(self.model_name)
+    
+    def validate_model_path(self, model_path):
+        if not isinstance(model_path, str):
+            raise ValueError("Путь к модели должен быть в виде строки")
+        return model_path
+
+    def analyze_sentiments(self, dictionary, name_groups):
+        return self.control.predict_tonalnost(dictionary, name_groups)
+
+class SentimentModel_Control:
+    def __init__(self, model_name):
+        self.sentiment_model = SentimentModel_Entity(model_name)
         self.tonality_labels = {0: "Нейтральная", 1: "Негативная", 2: "Положительная"}
 
     def predict_tonalnost(self, dictionary, name_groups):
@@ -31,7 +44,7 @@ class SentimentModel_Process(SentimentModel):
             group_value = name_groups[k]['name_group']
             
             for idx, text in s.items():
-                predicted, max_probability = self.predict(text)
+                predicted, max_probability = self.sentiment_model.predict(text)
                 indexes_reviews.append(idx)
                 tonalty_class.append(self.tonality_labels[predicted])
                 weights.append(max_probability)

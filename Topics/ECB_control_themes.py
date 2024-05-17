@@ -1,5 +1,3 @@
-from Exception.user_exception import Varierty_of_Errors
-
 class Group:
     def __init__(self, name_group, candidates, sm_score):
         self.name_group = name_group
@@ -21,7 +19,7 @@ class GroupInterface:
     def check_scores(self):
         for idx, group in self.control.get_groups().items():
             if not(group.is_sm_score_valid()):
-                raise Varierty_of_Errors(f"Тематика отзывов {idx}: {group.name_group} с невалидным sm_score: {group.sm_score}. Диапазон допустимых значений 0.66 < x < 0.99")
+                raise ValueError(f"Тематика отзывов {idx}: {group.name_group} с невалидным sm_score: {group.sm_score}. Диапазон допустимых значений 0.66 < x < 0.99")
     
 
 class GroupControl:
@@ -39,11 +37,11 @@ class GroupControl:
     def validate_entry(self, info):
         required_keys = {'name_group', 'candidates', 'sm_score'}
         if not required_keys.issubset(info.keys()):
-            return False
+            raise ValueError(f"Структура словаря нарушена проверьте наличие столбцов. 'name_group', 'candidates', 'sm_score'")
         if not isinstance(info['candidates'], list) or not all(isinstance(candidate, str) for candidate in info['candidates']):
-            return False
-        if not isinstance(info['sm_score'], (int, float)):
-            return False
+            raise ValueError(f"Поисковые запросы должны быть списком строк. List of Strings")
+        if not isinstance(info['sm_score'], (float)):
+            raise ValueError(f"Тип данных степени схожести не float")
         return True
 
     def get_groups(self):
