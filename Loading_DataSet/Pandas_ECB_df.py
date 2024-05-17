@@ -1,6 +1,6 @@
 import pandas as pd
 import yake
-from Exception.user_exception import Varierty_of_Errors  # Ensure the correct spelling of the exception
+
 class DataFrameEntity:
     def __init__(self, filepath):
         self.df = pd.read_csv(filepath)

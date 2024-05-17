@@ -1,7 +1,7 @@
 from Topics.topics_themes import dict_for_razmetka
 from Topics.ECB_control_themes import Group,GroupInterface,GroupControl
 from Loading_DataSet.Pandas_ECB_df import DataFrameEntity,DataFrameBoundary,DataFrameControl
-from Yake_KeyWords_Extract.yake_keywords import YakeExtractor, YakeBoundary, YakeControl
+from Yake_KeyWords_Extract.yake import YakeExtractor, YakeBoundary, YakeControl
 from RuBERT.RuBERT_ECB import ruBERT, BERT_Process
 from XLM_RoBERTa.Sentiment_Analysis_ECB import SentimentModel,SentimentModel_Process
 from Nested_List_to_JSON.save_to_json import NestedListToJSON
@@ -19,21 +19,18 @@ if __name__ == "__main__" :
     filepath = 'Loading_DataSet/data/New_coordinates_titles.csv'
     df_boundary = DataFrameBoundary(filepath)
     df_boundary.controller.process_data()
-    reviews = df_boundary.get_reviews('message')
-    entire_df = df_boundary.get_all_dataframe()
+    reviews = df_boundary.get_reviews('message') ## Получил все отзывы
+    entire_df = df_boundary.get_all_dataframe() ## Получил весь DF
     print(f' Тип данных переменной result - ', {type(entire_df)})
     print(f' Число строк result - ', {len(entire_df)})
-    '''
-    df_boundary = DataFrameBoundary(df_entity)
-    reviews = df_boundary.get_reviews('message') ## Получил все отзывы. Верно - актор может общаться с интерфейсом
     
     yake_boundary = YakeBoundary()
     keywords = yake_boundary.get_keywords(reviews) ## Проверка отзывов на словарь + KeyPhraseExtraction. - актор может общаться с интерфейсом
-    print(f' type of keywords = {type(keywords)}', len(keywords))
-    
-    #converter = NestedListToJSON(keywords) ## Сохранение в JSON формат для теста
-    #converter.save_to_json('nested_list.json')
-    
+    print(f' Тип данных переменной keywords = ', {type(keywords)} )
+    print(f' Число строк result - ', {len(keywords)})
+    converter = NestedListToJSON(keywords) ## Сохранение в JSON формат для теста
+    converter.save_to_json('nested_list_yake.json')
+    '''
     bert_processor = BERT_Process()
     bert_processor.convert_to_embed(keywords)
     print(f'Эмбединги извлечены. Активируем скрипт')
