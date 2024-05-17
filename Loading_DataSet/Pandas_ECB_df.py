@@ -46,9 +46,7 @@ class DataFrameBoundary:
         else:
             raise ValueError("The DataFrame пуст. Попробуйте снова")
 
-    def view_grouping_summary(self, update_df_ves):
-        if update_df_ves is not None and not update_df_ves.empty:
-            print(update_df_ves)
+
     
 class DataFrameControl:
     def __init__(self, filepath):

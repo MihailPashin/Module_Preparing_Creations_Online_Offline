@@ -7,23 +7,59 @@ from sentence_transformers import SentenceTransformer
 from txtai.embeddings import Embeddings
 from txtai import graph
 
-
-class ruBERT:
+class RuBERT_Entity:
     def __init__(self, model_path="sergeyzh/rubert-mini-sts", content=True, functions=None, expressions=None):
         self.model_path = model_path
         self.content = content
-        self.functions = [{"name": "graph", "function": "graph.attribute"},]
-        self.expressions = [{"name": "category", "expression": "graph(indexid, 'category')"},
-{"name": "topic", "expression": "graph(indexid, 'topic')"},]
+        self.functions = [{"name": "graph", "function": "graph.attribute"}]
+        self.expressions = [
+            {"name": "category", "expression": "graph(indexid, 'category')"},
+            {"name": "topic", "expression": "graph(indexid, 'topic')"}
+        ]
         self.embeddings = Embeddings(path=self.model_path, content=self.content, functions=self.functions, expressions=self.expressions)
 
     def convert_to_embed(self, keywords):
+        print('Формируется векторное пространство слов')
         merged = list(itertools.chain(*keywords.values()))
         self.embeddings.index(merged)
+    # Проверка на наличие векторного пространства   
+    def check_embed(self):
+        return self.embeddings.count() > 0
+    
+    def close_session(self):
+        print('Сессия векторных пространств слов закрывается')
+        return self.embeddings.close() 
 
-class BERT_Process(ruBERT):
-    def __init__(self, model_path="sergeyzh/rubert-mini-sts", content=True, functions=None, expressions=None):
-        super().__init__(model_path, content, functions, expressions)
+
+class RuBERT_Boundary:
+    def __init__(self, model_path="sergeyzh/rubert-mini-sts"):
+        self.model_path = self.validate_model_path(model_path)
+        self.control = RuBERT_Control(self.model_path)
+
+    def validate_model_path(self, model_path):
+        if not isinstance(model_path, str):
+            raise ValueError("Путь к модели должен быть в виде строки")
+        return model_path
+
+    def activate_embed(self, keywords):
+        self.control.run_convertion(keywords)     
+        print('Преобразуем ключевые фразы в эмбеддинги для шаблонов отбора отзывов')  
+
+    def process_reviews(self, dict_for_razmetka, full_dataset):
+        if not isinstance(full_dataset, dict) or not all(isinstance(candidate, str) for candidate in full_dataset.values()):
+            print(type(full_dataset))
+            raise ValueError(f"Типы данных не сходятся. Отзывы должны быть в словаре")
+        print('Обработка отзывов по тематике')  
+        result = self.control.filter_reviews(dict_for_razmetka, full_dataset)     
+        print('Type of result', type(result))  
+        return result
+
+class RuBERT_Control:
+    def __init__(self, model_path):
+        self.rubert = RuBERT_Entity(model_path)
+
+    def run_convertion(self, keywords):
+        self.rubert.convert_to_embed(keywords)
 
     def searching_embed(self, queries, sm_score):
         if sm_score > 0.99 or sm_score < 0.4:
@@ -31,7 +67,7 @@ class BERT_Process(ruBERT):
         else:
             some_lst = []
             for query in queries:
-                uid = self.embeddings.search(query, 1500)
+                uid = self.rubert.embeddings.search(query, 1500)
                 some_lst.extend([d['text'] if d['score'] > sm_score else None for d in uid])
             result = list(filter(lambda x: x is not None, some_lst))
             rst_without_duplicates = list(set(itertools.chain(result)))
@@ -80,28 +116,20 @@ class BERT_Process(ruBERT):
         dictionary = dict(zip(indexes_, reviews))
         Counter(groups_counts)
         return dictionary
+
     def filter_reviews(self, dict_for_razmetka,full_dataset):
         list_by_groups = []
-        for item in dict_for_razmetka.values():
-            rst_without_duplicates = []
-            embed_finding = self.searching_embed(item['candidates'], item['sm_score'])
-            result = self.stemmer_and_regex(embed_finding)
-            rst_without_duplicates.extend(list(set(itertools.chain(result))))
-            print('type of full_dataset',type(full_dataset))
-            result_for_one_group = self.creating_dict(rst_without_duplicates, full_dataset)
-            list_by_groups.append(result_for_one_group)
-        return list_by_groups
-
-    def summarization_indexes(self, dict_for_razmetka):
-        list_by_groups = []
-        for item in dict_for_razmetka.values():
-            rst_without_duplicates = []
-            embed_finding = self.searching_embed(item['candidates'], item['sm_score'])
-            result = self.stemmer_and_regex(embed_finding)
-            rst_without_duplicates.extend(list(set(itertools.chain(result))))
-            #list_by_groups=rst_without_duplicates ## добавил новое присвоение
-            list_by_groups.append(rst_without_duplicates)#добавил новое присвоение
-            #result_for_one_group = self.creating_dict(rst_without_duplicates, df)
-            #list_by_groups.append(result_for_one_group) старое присвоение
-        return list_by_groups
+        if(self.rubert.check_embed()):
+            for item in dict_for_razmetka.values():
+                rst_without_duplicates = []
+                embed_finding = self.searching_embed(item['candidates'], item['sm_score'])
+                result = self.stemmer_and_regex(embed_finding)
+                rst_without_duplicates.extend(list(set(itertools.chain(result))))
+                result_for_one_group = self.creating_dict(rst_without_duplicates, full_dataset)
+                list_by_groups.append(result_for_one_group)
+            self.rubert.close_session()
+            return list_by_groups
+        else:
+            raise ValueError(f"Векторное пространство слов не создано. Вызовите команду rubert_boundary.activate_embed(keywords)")
+            return False
 
