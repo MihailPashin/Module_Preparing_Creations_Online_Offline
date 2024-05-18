@@ -15,8 +15,7 @@ if __name__ == "__main__" :
             1: "This is a great product.",
             2: "I am not satisfied with the quality."
         }
-    container = Yake_Container()
-    boundary = container.boundary()
+    boundary = Yake_Container().boundary()
     keywords_dict = boundary.get_keywords(reviews_dict)
     print(keywords_dict)
     '''
