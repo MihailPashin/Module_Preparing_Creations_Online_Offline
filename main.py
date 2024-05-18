@@ -8,7 +8,7 @@ from Preparing_Tables.Grouping_Summary import DataProcessor, DataBoundary, DataC
 import pandas as pd
 from Containers.Yake import Yake_Container
 from Containers.Topic_Checker import Topic_Container
-
+from Containers.DF_Pandas import Pandas_Container
 if __name__ == "__main__" :
         
     #reviews_dict = {
@@ -18,24 +18,21 @@ if __name__ == "__main__" :
     #boundary = Yake_Container().boundary()
     #keywords_dict = boundary.get_keywords(reviews_dict)
     #print(keywords_dict)
-    
-    #group_control = GroupControl(dict_for_razmetka)
-    #group_boundary = GroupInterface(group_control)
-    #group_boundary.check_scores()
-    #group_boundary.display_groups() ## Отобразил все тематики
 
-    topic_boundary = Topic_Container().group_boundary()
-    topic_boundary.display_groups()
-    topic_boundary.check_scores()
-    '''
-    filepath = 'Loading_DataSet/data/New_coordinates_titles.csv'
-    df_boundary = DataFrameBoundary(filepath)
+    #topic_boundary = Topic_Container().group_boundary()
+    #topic_boundary.display_groups()
+    #topic_boundary.check_scores() ## Отобразил все тематики
+    
+    container = Pandas_Container()
+    container.config.filepath.from_value('Loading_DataSet/data/New_coordinates_titles.csv')
+    df_boundary = container.dataframe_boundary()
     df_boundary.controller.process_data()
-    reviews = df_boundary.get_reviews('message') ## Получил все отзывы
-    entire_df = df_boundary.get_all_dataframe() ## Получил весь DF
+    reviews = df_boundary.get_reviews('message')  # Получил все отзывы
+    entire_df = df_boundary.get_all_dataframe()   # Получил весь датафрейм
     print(f' Тип данных переменной result - ', {type(entire_df)})
     print(f' Число строк result - ', {len(entire_df)})
 
+    '''
     yake_boundary = YakeBoundary()
     keywords = yake_boundary.get_keywords(reviews) ## Проверка отзывов на словарь + KeyPhraseExtraction.
     print(f' Тип данных переменной keywords = ', {type(keywords)} )
