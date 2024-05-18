@@ -7,8 +7,19 @@ from XLM_RoBERTa.Sentiment_Analysis_ECB import SentimentModel_Entity,SentimentMo
 from Nested_List_to_JSON.save_to_json import NestedListToJSON
 from Preparing_Tables.Grouping_Summary import DataProcessor, DataBoundary, DataController
 import pandas as pd
+from Containers.Yake import Yake_Container
+
 
 if __name__ == "__main__" :
+    reviews_dict = {
+            1: "This is a great product.",
+            2: "I am not satisfied with the quality."
+        }
+    container = Yake_Container()
+    boundary = container.boundary()
+    keywords_dict = boundary.get_keywords(reviews_dict)
+    print(keywords_dict)
+    '''
     group_control = GroupControl(dict_for_razmetka)
     group_boundary = GroupInterface(group_control)
     group_boundary.check_scores()
@@ -46,7 +57,7 @@ if __name__ == "__main__" :
     #converter = NestedListToJSON(list_by_groups) ## Сохранение в JSON формат для теста
     #converter.save_to_json('nested_list_yake.json')
 
-    '''
+    
 
     data_processor = DataProcessor()
     data_controller = DataController(data_processor)
@@ -58,3 +69,7 @@ if __name__ == "__main__" :
     sliced_df = pd.concat([sliced_df, processed_data.tail(5)])
     print('Транспонированная таблица', sliced_df)
     '''
+
+    
+    #user = DataBoundary()
+    #user.validate_and_process()
