@@ -2,7 +2,8 @@ from Containers.Yake import Yake_Container
 from Containers.Topic_Checker import Topic_Container
 from Containers.DF_Pandas import Pandas_Container
 from Containers.RuBERT import RuBERT_Container
-from Containers.XLM_RoBERTa import SentimentModel_Container
+from Nested_List_to_JSON.save_to_json import NestedListToJSON
+#from Containers.XLM_RoBERTa import SentimentModel_Container
 import pandas as pd
 
 if __name__ == "__main__" :
@@ -13,8 +14,8 @@ if __name__ == "__main__" :
     
     converter = NestedListToJSON(topics) ## Сохранение в JSON формат для теста
     converter.save_to_json('topics.json')
-    container = Pandas_Container()
-    df_boundary = container.boundary()
+
+    df_boundary = Pandas_Container().boundary()
     reviews = df_boundary.get_reviews('message')  # Получил все отзывы
     entire_df = df_boundary.get_all_dataframe()   # Получил весь датафрейм
     print(f' Возвращен -', {type(entire_df)}, 'Число строк', {len(entire_df)})
