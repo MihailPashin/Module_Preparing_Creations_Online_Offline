@@ -41,8 +41,9 @@ class GroupInterface:
         for idx, group in groups.items():
             print(f"Тематика отзывов {idx + 1}: {group.name_group}")
 
-    def check_scores(self):
+    def check_scores_and_return(self):
         for idx, group in self.control.get_groups().items():
             if not group.is_sm_score_valid():
                 raise ValueError(f"Тематика отзывов {idx}: {group.name_group} с невалидным sm_score: {group.sm_score}. Диапазон допустимых значений 0.66 < x < 0.99")
+        return self.control.get_groups()
 

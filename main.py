@@ -9,13 +9,15 @@ import pandas as pd
 from Containers.Yake import Yake_Container
 from Containers.Topic_Checker import Topic_Container
 from Containers.DF_Pandas import Pandas_Container
+from Containers.RuBERT import RuBERTContainer
 
 if __name__ == "__main__" :
      
     topic_boundary = Topic_Container().group_boundary()
     topic_boundary.display_groups()
-    topic_boundary.check_scores() ## Отобразил все тематики   
-    
+    topics=topic_boundary.check_scores_and_return() ## Отобразил все тематики
+
+    '''
     container = Pandas_Container()
     container.config.filepath.from_value('Loading_DataSet/data/New_coordinates_titles.csv')
     df_boundary = container.dataframe_boundary()
@@ -29,7 +31,14 @@ if __name__ == "__main__" :
     keywords = yake_boundary.get_keywords(reviews) ## Проверка отзывов на словарь + KeyPhraseExtraction.
     print(f' Тип данных переменной keywords = ', {type(keywords)} )
     print(f' Число строк result - ', {len(keywords)})
-    '''
+    
+    rubert_boundary = RuBERTContainer().rubert_boundary()
+    #rubert_boundary.activate_embed(keywords)
+    list_by_groups = rubert_boundary.process_reviews(dict_for_razmetka, reviews)
+    print(f'len {len(list_by_groups)}')
+    print('len(list_by_groups[2]) = ',len(list_by_groups[2]))
+    print('len(list_by_groups[1]) = ',len(list_by_groups[1]))
+    
     yake_boundary = YakeBoundary()
     keywords = yake_boundary.get_keywords(reviews) ## Проверка отзывов на словарь + KeyPhraseExtraction.
     print(f' Тип данных переменной keywords = ', {type(keywords)} )
