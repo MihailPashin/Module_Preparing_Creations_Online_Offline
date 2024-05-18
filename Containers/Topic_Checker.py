@@ -1,6 +1,6 @@
 from dependency_injector import containers, providers
-from Topics.ECB_control_themes import Group,GroupInterface,GroupControl
-from Topics.topics_themes import dict_for_razmetka
+from Packages.Topics.ECB_control_themes import Group,GroupInterface,GroupControl
+from Packages.Topics.topics_themes import dict_for_razmetka
 
 class Topic_Container(containers.DeclarativeContainer):
     

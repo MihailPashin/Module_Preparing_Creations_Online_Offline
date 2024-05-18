@@ -2,7 +2,7 @@ from Containers.Yake import Yake_Container
 from Containers.Topic_Checker import Topic_Container
 from Containers.DF_Pandas import Pandas_Container
 from Containers.RuBERT import RuBERT_Container
-from Nested_List_to_JSON.save_to_json import NestedListToJSON
+from Packages.Nested_List_to_JSON.save_to_json import NestedListToJSON
 #from Containers.XLM_RoBERTa import SentimentModel_Container
 import pandas as pd
 
@@ -10,27 +10,21 @@ if __name__ == "__main__" :
      
     topic_boundary = Topic_Container().boundary()
     topics=topic_boundary.check_groups_and_save() ## Отобразил и вернул все тематики
-    print(f' Возвращен -', {type(topics)}, 'Число строк', {len(topics)})
-    
-    converter = NestedListToJSON(topics) ## Сохранение в JSON формат для теста
-    converter.save_to_json('topics.json')
+    print('Выполнено сохранение тематик')
 
     df_boundary = Pandas_Container().boundary()
     reviews = df_boundary.get_reviews('message')  # Получил все отзывы
     entire_df = df_boundary.get_all_dataframe()   # Получил весь датафрейм
-    print(f' Возвращен -', {type(entire_df)}, 'Число строк', {len(entire_df)})
+    print('Импотированный датасет сохранен и приведен к нужному формату - ', type(entire_df))
     
     yake_boundary = Yake_Container().boundary()
-    keywords = yake_boundary.get_keywords(reviews) ## Проверка отзывов на словарь + KeyPhraseExtraction.
-    print(f' Тип данных переменной keywords = ', {type(keywords)} )
-    print(f' Число строк result - ', {len(keywords)})
+    keywords = yake_boundary.get_keywords(reviews) ## Проверка отзывов на словарь + Извлечение ключ. фраз.
+    print('Ключевые фразы извлечены и приведены к формату ', type(keywords))
     
     rubert_boundary = RuBERT_Container().boundary()
-    rubert_boundary.activate_embed(keywords)
+    rubert_boundary.activate_embed(keywords) # Создание векторного пространства слов.
     list_by_groups = rubert_boundary.process_reviews(topics, reviews)
-    print(f'len {len(list_by_groups)}')
-    print('len(list_by_groups[2]) = ',len(list_by_groups[2]))
-    print('len(list_by_groups[1]) = ',len(list_by_groups[1]))
+    print('Разметка отзывов по тематикам выполнена и сохранена ')
     '''
 
     sentiment_boundary = SentimentModel_Boundary()

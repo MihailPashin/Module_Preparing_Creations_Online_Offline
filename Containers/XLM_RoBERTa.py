@@ -1,5 +1,5 @@
 from dependency_injector import containers, providers
-from XLM_RoBERTa.Sentiment_Analysis_ECB import SentimentModel_Entity,SentimentModel_Boundary,SentimentModel_Control
+from Packages.XLM_RoBERTa.Sentiment_Analysis_ECB import SentimentModel_Entity,SentimentModel_Boundary,SentimentModel_Control
 
 class SentimentModel_Container(containers.DeclarativeContainer):
     

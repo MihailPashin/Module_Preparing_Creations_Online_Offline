@@ -1,5 +1,5 @@
 from dependency_injector import containers, providers
-from RuBERT.RuBERT_ECB import RuBERT_Entity,RuBERT_Boundary, RuBERT_Control
+from Packages.RuBERT.RuBERT_ECB import RuBERT_Entity,RuBERT_Boundary, RuBERT_Control
 
 class RuBERT_Container(containers.DeclarativeContainer):
     config = providers.Configuration()
