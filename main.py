@@ -2,12 +2,22 @@ from Containers.Yake import Yake_Container
 from Containers.Topic_Checker import Topic_Container
 from Containers.DF_Pandas import Pandas_Container
 from Containers.RuBERT import RuBERT_Container
-from Packages.Nested_List_to_JSON.save_to_json import NestedListToJSON
 from Containers.XLM_RoBERTa import SentimentModel_Container
+from Containers.List2JSON import Save2JSON_Container
 import pandas as pd
 
 if __name__ == "__main__" :
      
+    nested_list = [
+        {"name": "John", "age": 30, "city": "New York"},
+        {"name": "Anna", "age": 22, "city": "London"},
+        {"name": "Mike", "age": 32, "city": "San Francisco"}]
+    file_path = 'output.json'
+    container = Save2JSON_Container()
+    container.config.nested_list.from_value(nested_list)
+    init_convert = container.init_convert().save_to_json(file_path)
+
+    '''
     topic_boundary = Topic_Container().boundary()
     topics=topic_boundary.check_groups_and_save() ## Отобразил и вернул все тематики
     print('Выполнено сохранение тематик')
@@ -32,7 +42,6 @@ if __name__ == "__main__" :
     sliced_df = pd.concat([result.head(5), result.tail(5)])
     print ('Результирующий DataFrame',sliced_df)
 
-    '''
 
     sentiment_boundary = SentimentModel_Boundary()
     result = sentiment_boundary.analyze_sentiments(list_by_groups, dict_for_razmetka)
