@@ -9,19 +9,12 @@ import pandas as pd
 from Containers.Yake import Yake_Container
 from Containers.Topic_Checker import Topic_Container
 from Containers.DF_Pandas import Pandas_Container
-if __name__ == "__main__" :
-        
-    #reviews_dict = {
-    #        1: "This is a great product.",
-    #        2: "I am not satisfied with the quality."
-    #    }
-    #boundary = Yake_Container().boundary()
-    #keywords_dict = boundary.get_keywords(reviews_dict)
-    #print(keywords_dict)
 
-    #topic_boundary = Topic_Container().group_boundary()
-    #topic_boundary.display_groups()
-    #topic_boundary.check_scores() ## Отобразил все тематики
+if __name__ == "__main__" :
+     
+    topic_boundary = Topic_Container().group_boundary()
+    topic_boundary.display_groups()
+    topic_boundary.check_scores() ## Отобразил все тематики   
     
     container = Pandas_Container()
     container.config.filepath.from_value('Loading_DataSet/data/New_coordinates_titles.csv')
@@ -32,6 +25,10 @@ if __name__ == "__main__" :
     print(f' Тип данных переменной result - ', {type(entire_df)})
     print(f' Число строк result - ', {len(entire_df)})
 
+    yake_boundary = Yake_Container().boundary()
+    keywords = yake_boundary.get_keywords(reviews) ## Проверка отзывов на словарь + KeyPhraseExtraction.
+    print(f' Тип данных переменной keywords = ', {type(keywords)} )
+    print(f' Число строк result - ', {len(keywords)})
     '''
     yake_boundary = YakeBoundary()
     keywords = yake_boundary.get_keywords(reviews) ## Проверка отзывов на словарь + KeyPhraseExtraction.
