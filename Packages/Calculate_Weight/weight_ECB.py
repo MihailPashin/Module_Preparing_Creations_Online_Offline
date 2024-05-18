@@ -33,9 +33,11 @@ class DataController:
     def process_data(self, df):
         update_df_ves = df.copy()
         for segment, data in update_df_ves.groupby('Group'):
+            print('segment', segment)
             normalized_values = self.data_normalizer.normalize(data)
-            update_df_ves=self.data_normalizer.adjust_scores(data, normalized_values)
-        return update_df_ves
+            adjusted_data = self.data_normalizer.adjust_scores(data, normalized_values)
+            df.loc[data.index, 'svess'] = adjusted_data['svess']
+        return df
 
 class DataBoundary:
     def __init__(self, controller):
@@ -44,5 +46,6 @@ class DataBoundary:
     def process_grading(self, df):
         required_columns = ['averall_ves', 'Положительная', 'Негативная', 'Нейтральная', 'Group']
         if not all(col in df.columns for col in required_columns):
-            raise ValueError(f"Datframe должен содержвать столбцы: {required_columns}")
+            raise ValueError(f"Datframe должен содержать столбцы: {required_columns}")
         return self.controller.process_data(df)
+

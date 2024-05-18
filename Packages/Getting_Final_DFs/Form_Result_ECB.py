@@ -14,7 +14,8 @@ class Forming_Entity:
         groups = df[['Group']].drop_duplicates().reset_index(drop=True)
         groups.index += 1
         groups = groups.reset_index(level=0).rename(columns={"index": "group_id"})
-
+        print('len groups', len(groups))
+        print('df.info', df.info())
         return home_objects, point_coordinates, groups
 
     def merge_data(self, home_objects, point_coordinates, df):
@@ -22,6 +23,8 @@ class Forming_Entity:
         home_objects = home_objects[['object_id', 'title', 'id']].rename(columns={'id': 'coord_id'})
 
         raions_id = pd.merge(home_objects, df, on=['title'])
+        print('len home_objects', len(home_objects))        
+        print('len raions_id', len(raions_id))
         return home_objects, raions_id
 
     def final_merge(self, groups, raions_id, df):
@@ -56,18 +59,17 @@ class Forming_Control:
         home_objects, point_coordinates, groups = self.data_processor.split_data(df)
         home_objects, raions_id = self.data_processor.merge_data(home_objects, point_coordinates, df)
         final_result = self.data_processor.final_merge(groups, raions_id, df)
-        
+
         home_objects_dict = home_objects.to_dict(orient='records')
         raions_id_dict = raions_id.to_dict(orient='records')
         point_coordinates_dict = point_coordinates.to_dict(orient='records')
         groups_dict = groups.to_dict(orient='records')
         final_result_dict = final_result.to_dict(orient='records')
-
+        print('final_result', len(final_result_dict), 'raions_id_dict', len(raions_id_dict), 'point_coordinates_dict',len(point_coordinates_dict),len(groups_dict), 'groups')
         return [{'final_result': final_result_dict},
-            {'raions_id': raions_id_dict},
-            {'point_coordinates': point_coordinates_dict},
+            {'coordinates': point_coordinates_dict},
             {'groups': groups_dict},
-            {'home_objects': home_objects_dict}]
+            {'objects_nedvizhimost': home_objects_dict}]
 
 
 
