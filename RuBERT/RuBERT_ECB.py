@@ -9,8 +9,6 @@ from txtai import graph
 
 class RuBERT_Entity:
     def __init__(self, model_path, content=True, functions=None, expressions=None):
-        print('model_path',type(model_path))
-        print('model_path   ',model_path)
         self.model_path = model_path
         self.content = content
         self.functions = functions if functions is not None else [{"name": "graph", "function": "graph.attribute"}]
@@ -100,8 +98,8 @@ class RuBERT_Control:
             raise ValueError("Векторное пространство слов не создано. Вызовите команду rubert_boundary.activate_embed(keywords)")
 
 class RuBERT_Boundary:
-    def __init__(self, control: RuBERT_Control):
-        self.control = control
+    def __init__(self, rubert_control: RuBERT_Control):
+        self.control = rubert_control
 
     def activate_embed(self, keywords):
         self.control.run_convertion(keywords)

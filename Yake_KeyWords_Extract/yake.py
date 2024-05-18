@@ -19,7 +19,6 @@ class YakeControl:
     def extract_keywords(self, reviews_dict):
         print('Активация алгоритма Yake')
         keywords_dict = {}
-        print('len reviews dict', len(reviews_dict))
         for index, review in reviews_dict.items():
             keywords = self.yake_extractor.extract_single_row(review)
             keywords_dict[index] = keywords
@@ -46,7 +45,4 @@ class YakeBoundary:
         for index, review in list(keywords_dict.items())[:2]:
             print(f"Ключ отзыва: {index}, Ключевые фразы: {review}")
         return keywords_dict
-
-
-
 

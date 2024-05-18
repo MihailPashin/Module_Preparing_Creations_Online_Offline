@@ -47,8 +47,8 @@ class DataFrameControl:
         self.dataframe_entity.display_info()
 
 class DataFrameBoundary:
-    def __init__(self, control: DataFrameControl):
-        self.controller = control
+    def __init__(self, dataframe_control: DataFrameControl):
+        self.controller = dataframe_control
 
     def get_reviews(self, column_name):
         self.controller.process_data()

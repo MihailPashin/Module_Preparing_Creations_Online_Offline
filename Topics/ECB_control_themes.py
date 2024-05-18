@@ -29,21 +29,28 @@ class GroupControl:
             raise ValueError("Тип данных степени схожести не float")
         return True
 
-    def get_groups(self):
-        return self.groups
+    def check_groups(self):
+        return self.groups 
+ 
+    def save_groups(self):
+        result = {}
+        for idx, group in self.groups.items():
+            result[idx] = {
+                'name_group': group.name_group,
+                'candidates': group.candidates,
+                'sm_score': group.sm_score
+            }
+        return result
 
 class GroupInterface:
-    def __init__(self, control: GroupControl):
-        self.control = control
+    def __init__(self, group_control: GroupControl):
+        self.control = group_control
 
-    def display_groups(self):
-        groups = self.control.get_groups()
-        for idx, group in groups.items():
-            print(f"Тематика отзывов {idx + 1}: {group.name_group}")
-
-    def check_scores_and_return(self):
-        for idx, group in self.control.get_groups().items():
-            if not group.is_sm_score_valid():
-                raise ValueError(f"Тематика отзывов {idx}: {group.name_group} с невалидным sm_score: {group.sm_score}. Диапазон допустимых значений 0.66 < x < 0.99")
-        return self.control.get_groups()
+    def check_groups_and_save(self):
+        for idx, group in self.control.check_groups().items():
+            if not(group.is_sm_score_valid()):
+                raise ValueError(f"Тематика отзывов {idx}: {group.name_group} с невалидным sm_score: {group.sm_score}. Диапазон допустимых значений 0.66 < x < 0.99")      
+            else:
+                print(f"Тематика отзывов {idx + 1}: {group.name_group}")
+        return self.control.save_groups()
 
