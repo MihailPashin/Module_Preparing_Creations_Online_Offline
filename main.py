@@ -17,16 +17,13 @@ if __name__ == "__main__" :
     topic_boundary.display_groups()
     topics=topic_boundary.check_scores_and_return() ## Отобразил все тематики
 
-    '''
     container = Pandas_Container()
-    container.config.filepath.from_value('Loading_DataSet/data/New_coordinates_titles.csv')
     df_boundary = container.dataframe_boundary()
-    df_boundary.controller.process_data()
     reviews = df_boundary.get_reviews('message')  # Получил все отзывы
     entire_df = df_boundary.get_all_dataframe()   # Получил весь датафрейм
-    print(f' Тип данных переменной result - ', {type(entire_df)})
-    print(f' Число строк result - ', {len(entire_df)})
-
+    print(f' Тип данных переменной entire_df - ', {type(entire_df)})
+    print(f' Число строк entire_df - ', {len(entire_df)})
+    '''
     yake_boundary = Yake_Container().boundary()
     keywords = yake_boundary.get_keywords(reviews) ## Проверка отзывов на словарь + KeyPhraseExtraction.
     print(f' Тип данных переменной keywords = ', {type(keywords)} )
@@ -34,7 +31,7 @@ if __name__ == "__main__" :
     
     rubert_boundary = RuBERTContainer().rubert_boundary()
     #rubert_boundary.activate_embed(keywords)
-    list_by_groups = rubert_boundary.process_reviews(dict_for_razmetka, reviews)
+    list_by_groups = rubert_boundary.process_reviews(topics, reviews)
     print(f'len {len(list_by_groups)}')
     print('len(list_by_groups[2]) = ',len(list_by_groups[2]))
     print('len(list_by_groups[1]) = ',len(list_by_groups[1]))

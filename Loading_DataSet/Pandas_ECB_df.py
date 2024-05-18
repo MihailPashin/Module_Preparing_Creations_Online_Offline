@@ -51,8 +51,10 @@ class DataFrameBoundary:
         self.controller = control
 
     def get_reviews(self, column_name):
+        self.controller.process_data()
         if column_name in self.controller.dataframe_entity.df.columns:
             reviews_series = self.controller.dataframe_entity.df[column_name]
+            print('Число отзывов из столбца',len(reviews_series))
             return reviews_series.to_dict()
         else:
             raise ValueError(f"Столбца '{column_name}' нет в DataFrame.")

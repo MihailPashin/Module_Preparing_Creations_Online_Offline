@@ -4,7 +4,8 @@ from Loading_DataSet.Pandas_ECB_df import DataFrameEntity,DataFrameBoundary,Data
 
 class Pandas_Container(containers.DeclarativeContainer):
     config = providers.Configuration()
-
+    config.filepath.from_value('Loading_DataSet/data/New_coordinates_titles.csv')
+    
     dataframe_entity = providers.Factory(DataFrameEntity, filepath=config.filepath)
     dataframe_control = providers.Factory(DataFrameControl, dataframe_entity=dataframe_entity)
     dataframe_boundary = providers.Factory(DataFrameBoundary, control=dataframe_control)
