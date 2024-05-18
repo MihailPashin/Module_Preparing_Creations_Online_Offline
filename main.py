@@ -1,4 +1,3 @@
-from Topics.topics_themes import dict_for_razmetka
 from Topics.ECB_control_themes import Group,GroupInterface,GroupControl
 from Loading_DataSet.Pandas_ECB_df import DataFrameEntity,DataFrameBoundary,DataFrameControl
 from Yake_KeyWords_Extract.yake import YakeExtractor, YakeBoundary, YakeControl
@@ -8,22 +7,27 @@ from Nested_List_to_JSON.save_to_json import NestedListToJSON
 from Preparing_Tables.Grouping_Summary import DataProcessor, DataBoundary, DataController
 import pandas as pd
 from Containers.Yake import Yake_Container
-
+from Containers.Topic_Checker import Topic_Container
 
 if __name__ == "__main__" :
-    reviews_dict = {
-            1: "This is a great product.",
-            2: "I am not satisfied with the quality."
-        }
-    boundary = Yake_Container().boundary()
-    keywords_dict = boundary.get_keywords(reviews_dict)
-    print(keywords_dict)
-    '''
-    group_control = GroupControl(dict_for_razmetka)
-    group_boundary = GroupInterface(group_control)
-    group_boundary.check_scores()
-    group_boundary.display_groups() ## Отобразил все тематики
+        
+    #reviews_dict = {
+    #        1: "This is a great product.",
+    #        2: "I am not satisfied with the quality."
+    #    }
+    #boundary = Yake_Container().boundary()
+    #keywords_dict = boundary.get_keywords(reviews_dict)
+    #print(keywords_dict)
+    
+    #group_control = GroupControl(dict_for_razmetka)
+    #group_boundary = GroupInterface(group_control)
+    #group_boundary.check_scores()
+    #group_boundary.display_groups() ## Отобразил все тематики
 
+    topic_boundary = Topic_Container().group_boundary()
+    topic_boundary.display_groups()
+    topic_boundary.check_scores()
+    '''
     filepath = 'Loading_DataSet/data/New_coordinates_titles.csv'
     df_boundary = DataFrameBoundary(filepath)
     df_boundary.controller.process_data()

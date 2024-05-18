@@ -7,21 +7,6 @@ class Group:
     def is_sm_score_valid(self):
         return 0.66 < self.sm_score < 0.99
 
-class GroupInterface:
-    def __init__(self, control):
-        self.control = control
-
-    def display_groups(self):
-        groups = self.control.get_groups()
-        for idx, group in groups.items():
-            print(f"Тематика отзывов {idx+1}: {group.name_group}")
-
-    def check_scores(self):
-        for idx, group in self.control.get_groups().items():
-            if not(group.is_sm_score_valid()):
-                raise ValueError(f"Тематика отзывов {idx}: {group.name_group} с невалидным sm_score: {group.sm_score}. Диапазон допустимых значений 0.66 < x < 0.99")
-    
-
 class GroupControl:
     def __init__(self, data):
         self.groups = {}
@@ -37,12 +22,27 @@ class GroupControl:
     def validate_entry(self, info):
         required_keys = {'name_group', 'candidates', 'sm_score'}
         if not required_keys.issubset(info.keys()):
-            raise ValueError(f"Структура словаря нарушена проверьте наличие столбцов. 'name_group', 'candidates', 'sm_score'")
+            raise ValueError("Структура словаря нарушена - проверьте наличие столбцов. 'name_group', 'candidates', 'sm_score'")
         if not isinstance(info['candidates'], list) or not all(isinstance(candidate, str) for candidate in info['candidates']):
-            raise ValueError(f"Поисковые запросы должны быть списком строк. List of Strings")
-        if not isinstance(info['sm_score'], (float)):
-            raise ValueError(f"Тип данных степени схожести не float")
+            raise ValueError("Поисковые запросы должны быть списком строк. List of Strings")
+        if not isinstance(info['sm_score'], float):
+            raise ValueError("Тип данных степени схожести не float")
         return True
 
     def get_groups(self):
         return self.groups
+
+class GroupInterface:
+    def __init__(self, control: GroupControl):
+        self.control = control
+
+    def display_groups(self):
+        groups = self.control.get_groups()
+        for idx, group in groups.items():
+            print(f"Тематика отзывов {idx + 1}: {group.name_group}")
+
+    def check_scores(self):
+        for idx, group in self.control.get_groups().items():
+            if not group.is_sm_score_valid():
+                raise ValueError(f"Тематика отзывов {idx}: {group.name_group} с невалидным sm_score: {group.sm_score}. Диапазон допустимых значений 0.66 < x < 0.99")
+
