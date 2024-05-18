@@ -3,7 +3,7 @@ import json
 class NestedListToJSON:
     def __init__(self, nested_list):
         self.nested_list = nested_list
-
+    
     def save_to_json(self, file_path):
         try:
             with open(file_path, 'w',encoding='utf-8') as json_file:

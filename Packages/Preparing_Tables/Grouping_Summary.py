@@ -1,6 +1,7 @@
 import pandas as pd
 
 class DataProcessor:
+    
     def merge_data(self, result, df):
         merged_df = pd.merge(result, df, left_on='Индекс', right_on=df.index).reset_index(drop=True, inplace=False)
         return merged_df
@@ -51,19 +52,29 @@ class DataBoundary:
             
             raise ValueError("The second dataframe must contain 'Group' and 'title' columns.")
         return self.controller.process_data(result, df)
-    '''
-    def view_grouping_summary(self, result, df):
+
+class DataBoundary:
+    def __init__(self):
+        self.boundary = boundary
+
+    def validate_and_process(self, result, df):
+        print(df.info())
+        df.info()
         if 'Индекс' not in result.columns:
             raise ValueError("The first dataframe must contain the 'Индекс' column.")
         if not all(col in df.columns for col in ['coord_X', 'coord_Y']):
             raise ValueError("The second dataframe must contain 'coord_X' and 'coord_Y' columns.")
-
+        if not all(col in df.columns for col in ['Group', 'title']):
+            raise ValueError("The second dataframe must contain 'Group' and 'title' columns.")
+        controller = DataController()
         return self.controller.process_data(result, df)
-    '''
+
+
 class DataController:
     def __init__(self, data_processor):
-        self.data_processor = data_processor
-
+        self.data_processor = DataProcessor()
+        print('Экземпляр создался')
+        
     def process_data(self, result, df):
         merged_df = self.data_processor.merge_data(result, df)
         summary = self.data_processor.summarize_data(merged_df)

@@ -1,60 +1,38 @@
-from Topics.topics_themes import dict_for_razmetka
-from Topics.ECB_control_themes import Group,GroupInterface,GroupControl
-from Loading_DataSet.Pandas_ECB_df import DataFrameEntity,DataFrameBoundary,DataFrameControl
-from Yake_KeyWords_Extract.yake import YakeExtractor, YakeBoundary, YakeControl
-from RuBERT.RuBERT_ECB import RuBERT_Entity,RuBERT_Boundary, RuBERT_Control
-from XLM_RoBERTa.Sentiment_Analysis_ECB import SentimentModel_Entity,SentimentModel_Boundary,SentimentModel_Control
-from Nested_List_to_JSON.save_to_json import NestedListToJSON
-from Preparing_Tables.Grouping_Summary import DataProcessor, DataBoundary, DataController
+from Containers.Yake import Yake_Container
+from Containers.Topic_Checker import Topic_Container
+from Containers.DF_Pandas import Pandas_Container
+from Containers.RuBERT import RuBERT_Container
+from Containers.XLM_RoBERTa import SentimentModel_Container
+from Containers.List2JSON import Save2JSON_Container
 import pandas as pd
 
 if __name__ == "__main__" :
-    group_control = GroupControl(dict_for_razmetka)
-    group_boundary = GroupInterface(group_control)
-    group_boundary.check_scores()
-    group_boundary.display_groups() ## Отобразил все тематики
-
-    filepath = 'Loading_DataSet/data/New_coordinates_titles.csv'
-    df_boundary = DataFrameBoundary(filepath)
-    df_boundary.controller.process_data()
-    reviews = df_boundary.get_reviews('message') ## Получил все отзывы
-    entire_df = df_boundary.get_all_dataframe() ## Получил весь DF
-    print(f' Тип данных переменной result - ', {type(entire_df)})
-    print(f' Число строк result - ', {len(entire_df)})
-
-    yake_boundary = YakeBoundary()
-    keywords = yake_boundary.get_keywords(reviews) ## Проверка отзывов на словарь + KeyPhraseExtraction.
-    print(f' Тип данных переменной keywords = ', {type(keywords)} )
-    print(f' Число строк result - ', {len(keywords)})
    
-    rubert_boundary = RuBERT_Boundary()
-    rubert_boundary.activate_embed(keywords)
-    list_by_groups = rubert_boundary.process_reviews(dict_for_razmetka, reviews)
-    print(f'len {len(list_by_groups)}')
-    print('len(list_by_groups[2]) = ',len(list_by_groups[2]))
-    print('len(list_by_groups[1]) = ',len(list_by_groups[1]))
+    topic_boundary = Topic_Container().boundary()
+    topics=topic_boundary.check_groups_and_save() ## Отобразил и вернул все тематики
+    print('Выполнено сохранение тематик')
 
-    sentiment_boundary = SentimentModel_Boundary()
-    result = sentiment_boundary.analyze_sentiments(list_by_groups, dict_for_razmetka)
-    print('Sentiment Analysis окончен. Число строк в таблице', len(result))    
-    print(f' Тип данных переменной result - ', {type(result)})
+    df_boundary = Pandas_Container().boundary()
+    reviews = df_boundary.get_reviews('message')  # Получил все отзывы  
+    entire_df = df_boundary.get_all_dataframe()   # Получил весь датафрейм
+    print('Импотированный датасет сохранен и приведен к нужному формату - ', type(entire_df))
+    
+    yake_boundary = Yake_Container().boundary()
+    keywords = yake_boundary.get_keywords(reviews) ## Проверка отзывов на словарь + Извлечение ключ. фраз.
+    print('Ключевые фразы извлечены и приведены к формату ', type(keywords))
+    container = Save2JSON_Container()
+    container.config.nested_list.from_value(keywords)
+    container.init_convert().save_to_json('yake_keywords.json') ## Сохрание ключ. фраз в JSON 
 
-    sliced_df = result.head(5)
-    sliced_df = pd.concat([sliced_df, result.tail(5)])
+    rubert_boundary = RuBERT_Container().boundary()
+    rubert_boundary.activate_embed(keywords) # Создание векторного пространства слов.
+    list_by_groups = rubert_boundary.process_reviews(topics, reviews)
+    print('Разметка отзывов по тематикам выполнена и сохранена ')
+    
+    sentiment_boundary = SentimentModel_Container().boundary()
+    result = sentiment_boundary.analyze_sentiments(list_by_groups, topics)
+    print('Sentiment Analysis произведён. Число строк в таблице',len(result))
+    sliced_df = pd.concat([result.head(5), result.tail(5)])
+    print ('Результирующий DataFrame',sliced_df)
 
-    print ('resulting_dataframe',sliced_df)
-    #converter = NestedListToJSON(list_by_groups) ## Сохранение в JSON формат для теста
-    #converter.save_to_json('nested_list_yake.json')
 
-    '''
-
-    data_processor = DataProcessor()
-    data_controller = DataController(data_processor)
-    data_boundary = DataBoundary(data_controller)
-    all_dataset = df_boundary.get_all_dataframe()
-    df_entity.display_info()
-    processed_data = data_boundary.validate_and_process(result, all_dataset)
-    sliced_df = processed_data.head(5)
-    sliced_df = pd.concat([sliced_df, processed_data.tail(5)])
-    print('Транспонированная таблица', sliced_df)
-    '''

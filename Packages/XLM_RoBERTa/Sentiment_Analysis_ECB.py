@@ -17,21 +17,15 @@ class SentimentModel_Entity:
         return predicted, max_probability
 
 class SentimentModel_Boundary:
-    def __init__(self, model_name="sismetanin/xlm_roberta_base-ru-sentiment-rureviews"):
-        self.model_name = self.validate_model_path(model_name)
-        self.control = SentimentModel_Control(self.model_name)
-    
-    def validate_model_path(self, model_path):
-        if not isinstance(model_path, str):
-            raise ValueError("Путь к модели должен быть в виде строки")
-        return model_path
+    def __init__(self, sentiment_control):
+        self.sentiment_control = sentiment_control
 
     def analyze_sentiments(self, dictionary, name_groups):
-        return self.control.predict_tonalnost(dictionary, name_groups)
+        return self.sentiment_control.predict_tonalnost(dictionary, name_groups)
 
 class SentimentModel_Control:
-    def __init__(self, model_name):
-        self.sentiment_model = SentimentModel_Entity(model_name)
+    def __init__(self, sentiment_model):
+        self.sentiment_model = sentiment_model
         self.tonality_labels = {0: "Нейтральная", 1: "Негативная", 2: "Положительная"}
 
     def predict_tonalnost(self, dictionary, name_groups):
@@ -60,4 +54,3 @@ class SentimentModel_Control:
             lambda x: 1 if x == 'Положительная' else (-1 if x == 'Негативная' else 0)
         )
         return result
-
