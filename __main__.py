@@ -29,7 +29,7 @@ if __name__ == "__main__" :
     
     json_saver.config.nested_list.from_value(keywords)
     json_saver.init_convert().save_to_json(relative_path,'yake_keywords_extract.json')
-    '''
+
     rubert_boundary = RuBERT_Container().boundary()
     rubert_boundary.activate_embed(keywords) # Создание векторного пространства слов.
     list_by_groups = rubert_boundary.process_reviews(topics, reviews)
@@ -62,5 +62,4 @@ if __name__ == "__main__" :
         json_saver.config.nested_list.from_value(groups)
         json_saver.init_convert().save_to_json(relative_path,f'{filename}.json')
     print ('Таблицы DataFrame сохранены в JSON формате. Модуль завершает работу')
-    '''
 
