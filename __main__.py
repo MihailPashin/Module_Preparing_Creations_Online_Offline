@@ -1,20 +1,23 @@
-from Containers.Yake import Yake_Container
 from Containers.Topic_Checker import Topic_Container
 from Containers.DF_Pandas import Pandas_Container
+from Containers.Yake import Yake_Container
 from Containers.RuBERT import RuBERT_Container
 from Containers.XLM_RoBERTa import SentimentModel_Container
 from Containers.List2JSON import Save2JSON_Container
 from Containers.DataPostProcessing import DataPostProcess_Container
 from Containers.Normalize_Weigth import NormalizerWeight_Container
 from Containers.Form_Result_ECB import Split_DF_Container
-import pandas as pd
+import os, pandas as pd
 
 if __name__ == "__main__" :
+    
+    json_saver = Save2JSON_Container()
+    current_dir = os.path.dirname(__file__)
+    relative_path = os.path.join(current_dir, 'Results_in_JSON')
    
     topic_boundary = Topic_Container().boundary()
     topics=topic_boundary.check_groups_and_save() ## Отобразил и вернул все тематики
     print('Выполнено сохранение тематик')
-
     df_boundary = Pandas_Container().boundary()
     reviews = df_boundary.get_reviews('message')  # Получил все отзывы  
     entire_df = df_boundary.get_all_dataframe()   # Получил весь датафрейм
@@ -23,9 +26,9 @@ if __name__ == "__main__" :
     yake_boundary = Yake_Container().boundary()
     keywords = yake_boundary.get_keywords(reviews) ## Проверка отзывов на словарь + Извлечение ключ. фраз.
     print('Ключевые фразы извлечены и приведены к формату ', type(keywords))
-    json_saver = Save2JSON_Container()
+    
     json_saver.config.nested_list.from_value(keywords)
-    json_saver.init_convert().save_to_json('Results_in_JSON','yake_keywords.json') ## Сохрание ключ. фраз в JSON 
+    json_saver.init_convert().save_to_json(relative_path,'yake_keywords_extract.json')
 
     rubert_boundary = RuBERT_Container().boundary()
     rubert_boundary.activate_embed(keywords) # Создание векторного пространства слов.
@@ -57,6 +60,6 @@ if __name__ == "__main__" :
     for entry in list_of_df:
         filename, groups = next(iter(entry.items()))
         json_saver.config.nested_list.from_value(groups)
-        json_saver.init_convert().save_to_json('Results_in_JSON',f'{filename}.json')
+        json_saver.init_convert().save_to_json(relative_path,f'{filename}.json')
     print ('Таблицы DataFrame сохранены в JSON формате. Модуль завершает работу')
-    
+
