@@ -5,12 +5,21 @@
 **обработать отзывы по запросу "новостройки" с сайта yandex.ru/maps и присвоить каждому району степень привлекательности**
 
 ## Задачи:
-    1. Предобработать датасет. В каталоге Loading_DataSet есит Class DataProcessor и скрипт для запуска Ready_DataFrame.
+    1. Предобработать датасет. Class DataProcessor и скрипт для запуска Ready_DataFrame.
     2. Подгрузка тем. Каталог Topics содержит Topics
-    3. RuBERT-2 + TxtAI. Поиск схожих векторных представлений фраз для распознавания тем. В каталоге RuBERT хранятся классы ruBERT, BERT_Process(ruBERT).
+    3. Языковая модель RuBERT-2 + TxtAI. Поиск схожих векторных представлений фраз для распознавания тем.
     4. Отбор отзывов по поисковым шаблонам из предыдущего шага.  
+    5. Проведение оценки тональности благодаря языковой модели XLM-RoBERTa
+    6. Сохранение всех таблиц в JSON для последующей загрузки в БД   
 
-## Результат сравнения- Лепестковая диаграмма по семи группам
+## Способы развертывания
+
+Развертывания модуля с помощью Docker-Hub [ссылка](https://hub.docker.com/repository/docker/mikhailpaskhinkgu/neurallanguagesmethods/general): 
+
+1. Вы в директории --> 
+2. mkdir output Создаём папку в bash терминале
+3. sudo docker run --rm --name mycontainer -v "$(pwd)/output:/output" mikhailpaskhinkgu/neurallanguagesmethods . Команда для открытия контейнера  
+4. Ожидаем выполнение скрипта и загрузку в папке output JSON файлы. Они источник данных для MySQL
 
 Развертывания модуля локально: 
 
@@ -19,6 +28,5 @@
 3. pip install -r requirements.txt
 4. python3 main&#46;py
 
-Запуск модуля в Google Colab: 
-[ссылка на код](https://colab.research.google.com/drive/1RdSNP5cAV2ZQGXLf6vxykboap8o2hJTD?usp=sharing)
+Запуск модуля в Google Colab: [ссылка на код](https://colab.research.google.com/drive/1RdSNP5cAV2ZQGXLf6vxykboap8o2hJTD?usp=sharing)
 
